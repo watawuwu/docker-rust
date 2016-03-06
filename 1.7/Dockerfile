@@ -5,6 +5,7 @@ RUN apt-get -y update \
                        gcc-arm-linux-gnueabihf \
                        make \
                        curl \
+                       ca-certificates \
                        python2.7 \
                        g++  --no-install-recommends
 
