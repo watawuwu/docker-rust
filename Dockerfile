@@ -1,8 +1,9 @@
 # ref https://hub.docker.com/r/ekidd/rust-musl-builder/~/dockerfile/
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG TOOLCHAIN=stable
 ARG TARGET=x86_64-unknown-linux-musl
+ARG OPENSSL_VERSION=1.1.1c
 
 RUN apt-get update && \
     apt-get install -y \
@@ -18,35 +19,48 @@ RUN apt-get update && \
         sudo \
         xutils-dev \
         && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
+    echo '%sudo   ALL=(ALL:ALL) NOPASSWD:ALL' > /etc/sudoers.d/nopasswd
 
-ENV PATH=/root/.cargo/bin:/usr/local/musl/bin:/usr/local/bin:/usr/bin:/bin
+RUN sudo ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
+
+USER rust
+RUN mkdir -p /home/rust/libs /home/rust/work
+
+ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain $TOOLCHAIN && \
     rustup default $TOOLCHAIN && \
     rustup target add $TARGET
 
-ADD cargo-config.toml /root/.cargo/config
-
-WORKDIR /root/libs
+ADD cargo-config.toml /home/rust/.cargo/config
 
 RUN echo "Building OpenSSL" && \
-  VERS=1.0.2l && \
-  curl -O https://www.openssl.org/source/openssl-$VERS.tar.gz && \
-  tar xvzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
-  env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl linux-x86_64 && \
-  env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
-  make && sudo make install && \
-  cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS && \
-  echo "Building zlib" && \
-  VERS=1.2.11 && \
-  cd /root/libs && \
-  curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
-  tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
-  CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
-  make && sudo make install && \
-  cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS
+    ls /usr/include/linux && \
+    sudo mkdir -p /usr/local/musl/include && \
+    sudo ln -s /usr/include/linux /usr/local/musl/include/linux && \
+    sudo ln -s /usr/include/x86_64-linux-gnu/asm /usr/local/musl/include/asm && \
+    sudo ln -s /usr/include/asm-generic /usr/local/musl/include/asm-generic && \
+    cd /tmp && \
+    curl -LO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" && \
+    tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
+    env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
+    env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
+    env C_INCLUDE_PATH=/usr/local/musl/include/ make && \
+    sudo make install && \
+    sudo rm /usr/local/musl/include/linux /usr/local/musl/include/asm /usr/local/musl/include/asm-generic && \
+    rm -r /tmp/*
+
+RUN echo "Building zlib" && \
+    cd /tmp && \
+    ZLIB_VERSION=1.2.11 && \
+    curl -LO "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" && \
+    tar xzf "zlib-$ZLIB_VERSION.tar.gz" && cd "zlib-$ZLIB_VERSION" && \
+    CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
+    make && sudo make install && \
+    rm -r /tmp/*
 
 ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
@@ -54,6 +68,8 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_LIB_DIR=/usr/local/musl/lib/ \
     OPENSSL_STATIC=1 \
     PKG_CONFIG_ALLOW_CROSS=true \
-    PKG_CONFIG_ALL_STATIC=true
+    PKG_CONFIG_ALL_STATIC=true \
+    LIBZ_SYS_STATIC=1 \
+    TARGET=musl
 
-WORKDIR /app
+WORKDIR /home/rust/work
