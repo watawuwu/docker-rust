@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 
 ARG TOOLCHAIN=stable
 ARG TARGET=x86_64-unknown-linux-musl
-ARG OPENSSL_VERSION=1.1.1c
+ARG OPENSSL_VERSION=1.1.1g
 
 RUN apt-get update && \
     apt-get install -y \
@@ -71,5 +71,9 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
     PKG_CONFIG_ALL_STATIC=true \
     LIBZ_SYS_STATIC=1 \
     TARGET=musl
+
+RUN cargo install -f cargo-audit && \
+    cargo install -f mdbook-graphviz && \
+    rm -rf /home/rust/.cargo/registry/
 
 WORKDIR /home/rust/work
