@@ -1,0 +1,15 @@
+name: Tracking Update
+
+on:
+  schedule:
+  - cron:  '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+      run: traking-update.bash
