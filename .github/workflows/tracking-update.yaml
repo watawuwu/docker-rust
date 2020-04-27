@@ -12,4 +12,4 @@ jobs:
     - name: Create tag
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
-      run: traking-update.bash
+      run: ./traking-update.bash
