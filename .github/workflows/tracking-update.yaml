@@ -11,5 +11,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Create tag
       env:
-        GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ./traking-update.bash
