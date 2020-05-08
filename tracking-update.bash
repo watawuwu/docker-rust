@@ -7,7 +7,7 @@ set -e -o pipefail
 
 
 GITHUB_API_URL="https://api.github.com"
-GITHUB_URL="https://github.com"
+GITHUB_URL="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com"
 SOURCE_REPO="rust-lang/rust"
 SINK_REPO="watawuwu/docker-rust"
 CUR_DIR=$(cd $(dirname $0); pwd)
