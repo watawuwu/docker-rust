@@ -35,7 +35,10 @@ ARG TARGET=x86_64-unknown-linux-musl
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain $TOOLCHAIN && \
     rustup default $TOOLCHAIN && \
-    rustup target add $TARGET
+    rustup target add $TARGET && \
+    rustup component add rustfmt && \
+    rustup component add clippy && \
+    rustup show
 
 ADD cargo-config.toml /home/rust/.cargo/config
 
@@ -75,7 +78,6 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
     TARGET=musl
 
 RUN cargo install -f cargo-audit && \
-    cargo install -f mdbook-graphviz && \
     rm -rf /home/rust/.cargo/registry/
 
 WORKDIR /home/rust/work
