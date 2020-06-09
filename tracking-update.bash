@@ -48,6 +48,14 @@ done<<<"$source_tags"
 [[ -z "$added_tag" ]] && exit
 
 git clone --depth=1 -b master "${GITHUB_URL}/${SINK_REPO}.git" "${WORK_DIR}"
+git config --global user.name "github-actions"
+git config --global user.email "watawuwu+ghbot@3bi.tech"
+
 cd "${WORK_DIR}"
+perl -pi -e "s/ARG TOOLCHAIN=.+/ARG TOOLCHAIN=${added_tag}/g" Dockerfile
+git add Dockerfile
+git commit -m "feat: bump up rust to ${added_tag}"
+
 git tag "$added_tag"
+${DEBUG} git push origin master
 ${DEBUG} git push origin "$added_tag"
