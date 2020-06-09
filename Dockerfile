@@ -1,9 +1,8 @@
 # ref https://hub.docker.com/r/ekidd/rust-musl-builder/~/dockerfile/
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
-ARG TOOLCHAIN=stable
-ARG TARGET=x86_64-unknown-linux-musl
 ARG OPENSSL_VERSION=1.1.1g
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
@@ -29,6 +28,9 @@ USER rust
 RUN mkdir -p /home/rust/libs /home/rust/work
 
 ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+ARG TOOLCHAIN=1.43.1
+ARG TARGET=x86_64-unknown-linux-musl
 
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain $TOOLCHAIN && \
