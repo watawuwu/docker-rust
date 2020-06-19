@@ -29,7 +29,7 @@ RUN mkdir -p /home/rust/libs /home/rust/work
 
 ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-ARG TOOLCHAIN=1.44.0
+ARG TOOLCHAIN=1.44.1
 ARG TARGET=x86_64-unknown-linux-musl
 
 RUN curl https://sh.rustup.rs -sSf | \
