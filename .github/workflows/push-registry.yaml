@@ -1,0 +1,42 @@
+name: Push Registry
+
+on:
+  push:
+    tags:
+    - '*'
+    branches:
+    - 'master'
+
+jobs:
+  push:
+    strategy:
+      matrix:
+        user:
+        - root
+        - rust
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup code
+      uses: actions/checkout@v2
+
+    - name: Gen tag name
+      id: get_tag_name
+      shell: bash -x {0}
+      run: |
+        tag=$(echo ${{ github.ref }} | perl -nle 'print $1 if /^refs\/(?:heads|tags)\/(.*?)$/' | tr '/' '-')
+        if [[ ${{ matrix.user }} == "rust" ]]; then
+          tag=${tag}-nonroot
+        fi
+        echo "::set-output name=tag::$tag"
+
+    - name: Push to GitHub Packages
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.CR_PAT }}
+        registry: ghcr.io
+        repository: watawuwu/rust
+        tags: ${{ steps.get_tag_name.outputs.tag }}
+        build_args: user=${{ matrix.user }}
