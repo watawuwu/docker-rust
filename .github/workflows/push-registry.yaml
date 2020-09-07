@@ -25,7 +25,7 @@ jobs:
       id: get_tag_name
       shell: bash -x {0}
       run: |
-        tag=$(echo ${{ github.ref }} | perl -nle 'print $1 if /^refs\/(?:heads|tags)\/(.*?)$/' | tr '/' '-' | tr 'main' 'latest')
+        tag=$(echo ${{ github.ref }} | perl -nle 'print $1 if /^refs\/(?:heads|tags)\/(.*?)$/' | tr '/' '-' | sed -e 's/main/latest/')
         if [[ ${{ matrix.user }} == "rust" ]]; then
           tag=${tag}-nonroot
         fi
