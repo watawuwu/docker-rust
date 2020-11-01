@@ -57,5 +57,5 @@ git add Dockerfile
 git commit -m "feat: bump up rust to ${added_tag}"
 
 git tag "$added_tag"
-${DEBUG} git push origin master
+${DEBUG} git push origin main
 ${DEBUG} git push origin "$added_tag"
