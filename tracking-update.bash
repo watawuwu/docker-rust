@@ -47,7 +47,7 @@ done<<<"$source_tags"
 
 [[ -z "$added_tag" ]] && exit
 
-git clone --depth=1 -b master "${GITHUB_URL}/${SINK_REPO}.git" "${WORK_DIR}"
+git clone --depth=1 -b main "${GITHUB_URL}/${SINK_REPO}.git" "${WORK_DIR}"
 git config --global user.name "github-actions"
 git config --global user.email "watawuwu+ghbot@3bi.tech"
 
