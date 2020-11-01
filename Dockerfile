@@ -1,22 +1,22 @@
 # ref https://hub.docker.com/r/ekidd/rust-musl-builder/~/dockerfile/
 FROM buildpack-deps:buster-scm
 
-ENV RUST_VERSION=1.47.0
-    DEBIAN_FRONTEND=noninteractive \
-    RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    TARGET=x86_64-unknown-linux-musl \
-    OPENSSL_VERSION=1.1.1g \
-    OPENSSL_DIR=/usr/local/musl/ \
-    OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
-    DEP_OPENSSL_INCLUDE=/usr/local/musl/include/ \
-    OPENSSL_LIB_DIR=/usr/local/musl/lib/ \
-    OPENSSL_STATIC="1" \
-    PKG_CONFIG_ALLOW_CROSS=true \
-    PKG_CONFIG_ALL_STATIC=true \
-    ZLIB_VERSION=1.2.11 \
-    LIBZ_SYS_STATIC=1
+ENV RUST_VERSION 1.47.0
+ENV DEBIAN_FRONTEND noninteractive
+ENV RUSTUP_HOME /usr/local/rustup
+ENV CARGO_HOME /usr/local/cargo
+ENV PATH /usr/local/cargo/bin:$PATH
+ENV TARGET x86_64-unknown-linux-musl
+ENV OPENSSL_VERSION 1.1.1g
+ENV OPENSSL_DIR /usr/local/musl/
+ENV OPENSSL_INCLUDE_DIR /usr/local/musl/include/
+ENV DEP_OPENSSL_INCLUDE /usr/local/musl/include/
+ENV OPENSSL_LIB_DIR /usr/local/musl/lib/
+ENV OPENSSL_STATIC "1"
+ENV PKG_CONFIG_ALLOW_CROSS true
+ENV PKG_CONFIG_ALL_STATIC true
+ENV ZLIB_VERSION 1.2.11
+ENV LIBZ_SYS_STATIC 1
 
 RUN apt-get update && apt-get install -y \
     build-essential \
