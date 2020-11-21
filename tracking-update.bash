@@ -52,7 +52,7 @@ git config --global user.name "github-actions"
 git config --global user.email "watawuwu+ghbot@3bi.tech"
 
 cd "${WORK_DIR}"
-perl -pi -e "s/ENV RUST_VERSION=.+/ENV RUST_VERSION=${added_tag}/g" Dockerfile
+perl -pi -e "s/ENV RUST_VERSION .+/ENV RUST_VERSION ${added_tag}/g" Dockerfile
 git add Dockerfile
 git commit -m "feat: bump up rust to ${added_tag}"
 
