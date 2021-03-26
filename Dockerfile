@@ -1,7 +1,7 @@
 # ref https://hub.docker.com/r/ekidd/rust-musl-builder/~/dockerfile/
 FROM buildpack-deps:buster-scm
 
-ENV RUST_VERSION 1.50.0
+ENV RUST_VERSION 1.51.0
 ENV DEBIAN_FRONTEND noninteractive
 ENV RUSTUP_HOME /usr/local/rustup
 ENV CARGO_HOME /usr/local/cargo
